@@ -1,0 +1,13 @@
+jobs:
+- name: hello-world
+  plan:
+  - get: source
+  - task: say-hello
+    file: source/task.yml
+
+resources:
+  - name: source
+    type: git
+    source:
+      uri: git@github.com:bsferreira/concourse.git
+      private_key: {{github-private-key}}
