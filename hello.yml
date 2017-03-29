@@ -1,13 +1,30 @@
 jobs:
 - name: hello-world
   plan:
-  - get: source
-  - task: say-hello
-    file: source/task.yml
+    - aggregate:
+      - get: source
+      - get: resource-version
+        params: {bump: minor}
+
+    - task: say-hello
+      file: source/task.yml
+
+    - put: resource-version
+      params: {file: resource-version/number}
 
 resources:
   - name: source
     type: git
     source:
       uri: git@github.com:bsferreira/concourse.git
+      private_key: {{github-private-key}}
+
+  - name: resource-version
+    type: semver
+    source:
+      driver: git
+      initial_version: 0.0.1
+      uri: git@github.com:bsferreira/concourse.git
+      branch: version
+      file: version
       private_key: {{github-private-key}}
